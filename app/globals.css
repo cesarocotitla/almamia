@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap');
+
+@import "tailwindcss";
+
+:root {
+  --brand-blue:  #3B509F;
+  --brand-gold:  #c4b08a;
+  --brand-dark:  #0e0905;
+  --font-serif:  'Playfair Display', serif;
+  --font-sans:   'Jost', sans-serif;
+  --chambray:    #3b51a0;
+  --scampi:      #5d6fb1;
+  --pigeon:      #a6b1d8;
+  --equator:     #e3b759;
+  --red-damask:  #d86a4b;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: clip;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: #f5f2ed;
+  color: #1a1208;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body::-webkit-scrollbar { display: none; }
+body { -ms-overflow-style: none; scrollbar-width: none; }
+
+.font-serif { font-family: var(--font-serif); }
+.font-sans  { font-family: var(--font-sans); }
