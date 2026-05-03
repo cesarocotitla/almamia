@@ -207,8 +207,7 @@ export default function Hero({ onStart }: HeroProps) {
         </div>
       </div>
 
-     
-     
+      
     </section>
   )
 }

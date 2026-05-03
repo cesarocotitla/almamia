@@ -3,7 +3,7 @@ import "./globals.css"
 
 export const metadata: Metadata = {
   title: "Alma Mía | Tostadora de Café",
-  description: "Diseña tu café ideal. Origen, tostado y molido artesanal mexicano.",
+  description: "Descubre tu café ideal. Origen, tostado y molido artesanal mexicano.",
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

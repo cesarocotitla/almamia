@@ -163,12 +163,13 @@ function QuantityStepper({ count, onChange }: { count: number; onChange: (n: num
 }
 
 // ── Step section ─────────────────────────────────────────────
-function StepSection({ stepId, label, subtitle, items, selectedIndex, onSelect, stepNumber, isLast, quantityCount, onQuantityChange }: {
+function StepSection({ stepId, label, subtitle, items, selectedIndex, onSelect, stepNumber, isLast, quantityCount, onQuantityChange, onContinue }: {
   stepId: StepId; label: string; subtitle: string
   items: Record<string, string | number | string[] | undefined>[]
   selectedIndex: number; onSelect: (i: number) => void
   stepNumber: number; isLast: boolean
   quantityCount: number; onQuantityChange: (n: number) => void
+  onContinue: () => void
 }) {
   const current = items[selectedIndex] as Record<string, string | number | string[] | undefined>
 
@@ -238,11 +239,27 @@ function StepSection({ stepId, label, subtitle, items, selectedIndex, onSelect, 
         </div>
       </div>
 
-      {/* Scroll hint */}
+      {/* Continue button */}
       {!isLast && (
-        <div style={{ position: "absolute", bottom: 36, left: "50%", transform: "translateX(-50%)", display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
-          <div style={{ width: 1, height: 40, background: "linear-gradient(to bottom, var(--chambray), transparent)" }} />
-          <span style={{ fontFamily: "var(--font-sans)", fontSize: 9, letterSpacing: "0.28em", textTransform: "uppercase", color: "rgba(26,18,8,0.28)" }}>Scroll</span>
+        <div style={{ display: "flex", justifyContent: "center", marginTop: 48, paddingBottom: 32 }}>
+          <button
+            onClick={onContinue}
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 12,
+              fontFamily: "var(--font-sans)", fontSize: 11, fontWeight: 500,
+              letterSpacing: "0.18em", textTransform: "uppercase",
+              color: "#fff", background: "var(--chambray)",
+              border: "none", borderRadius: 50,
+              padding: "14px 32px", cursor: "pointer",
+              boxShadow: "0 4px 20px rgba(59,81,160,0.2)",
+              transition: "transform 0.2s, box-shadow 0.2s",
+            }}
+            onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 8px 28px rgba(59,81,160,0.3)" }}
+            onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(59,81,160,0.2)" }}
+          >
+            Continuar
+            <span style={{ fontSize: 16 }}>↓</span>
+          </button>
         </div>
       )}
     </section>
@@ -253,6 +270,12 @@ function StepSection({ stepId, label, subtitle, items, selectedIndex, onSelect, 
 export default function ExperienceSection() {
   const [order,         setOrder]         = useState<Order>({ origin: 0, roast: 0, grind: 0, quantity: 0 })
   const [quantityCount, setQuantityCount] = useState(1)
+  const sectionRefs = useRef<(HTMLDivElement | null)[]>([])
+
+  const scrollToNext = (currentIndex: number) => {
+    const next = sectionRefs.current[currentIndex + 1]
+    if (next) next.scrollIntoView({ behavior: "smooth" })
+  }
 
   const basePrice  = QUANTITIES[order.quantity]?.price ?? 0
   const summary = {
@@ -268,19 +291,21 @@ export default function ExperienceSection() {
   return (
     <>
       {STEPS_CONFIG.map((step, i) => (
-        <StepSection
-          key={step.id}
-          stepId={step.id}
-          label={step.label}
-          subtitle={step.subtitle}
-          items={step.items as Record<string, string | number | string[] | undefined>[]}
-          selectedIndex={order[step.id]}
-          onSelect={idx => setOrder(prev => ({ ...prev, [step.id]: idx }))}
-          stepNumber={i + 1}
-          isLast={i === STEPS_CONFIG.length - 1}
-          quantityCount={quantityCount}
-          onQuantityChange={setQuantityCount}
-        />
+        <div key={step.id} ref={el => { sectionRefs.current[i] = el }}>
+          <StepSection
+            stepId={step.id}
+            label={step.label}
+            subtitle={step.subtitle}
+            items={step.items as Record<string, string | number | string[] | undefined>[]}
+            selectedIndex={order[step.id]}
+            onSelect={idx => setOrder(prev => ({ ...prev, [step.id]: idx }))}
+            stepNumber={i + 1}
+            isLast={i === STEPS_CONFIG.length - 1}
+            quantityCount={quantityCount}
+            onQuantityChange={setQuantityCount}
+            onContinue={() => scrollToNext(i)}
+          />
+        </div>
       ))}
 
       {/* CTA */}

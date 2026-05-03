@@ -21,7 +21,7 @@ export const HERO = {
   subtitle: "Cada taza es un ritual. Elige tu origen, tu proceso, tu momento.",
   cta: "Comenzar experiencia",
   backgroundImage:
-    "/bg.jpg",
+    "https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=1400&q=90&fit=crop",
   stats: [
     { value: "100%", label: "Arábica"      },
     { value: "Mx",   label: "Tostado aquí" },
@@ -43,7 +43,7 @@ export const ORIGINS = [
     accentColor: "#3b51a0",
     textDark: true,
   },
-  {
+  /**{
     id: "oaxaca",
     name: "Oaxaca",
     region: "Sierra Juárez",
@@ -68,23 +68,12 @@ export const ORIGINS = [
     bgColor: "#f2f0ed",
     accentColor: "#d86a4b",
     textDark: true,
-  },
+  },**/
 ]
 
 // ── TOSTADOS ─────────────────────────────────────────────────
 // 🖼 Reemplaza cada image: con tu render de Midjourney del nivel de tueste correspondiente
 export const ROASTS = [
-  {
-    id: "cinnamon",
-    name: "Cinnamon",
-    temp: "196°C",
-    notes: ["Floral", "Herbal", "Muy alta acidez"],
-    description: "El nivel más claro. El grano apenas comienza su transformación. Perfil crudo, herbáceo y vibrante con acidez pronunciada.",
-    image: "/grano-tostado.png",
-    bgColor: "#faf6f0",
-    accentColor: "#c4956a",
-    textDark: true,
-  },
   {
     id: "light",
     name: "Light",
@@ -204,21 +193,21 @@ export const GRINDS = [
 // ── CANTIDADES ───────────────────────────────────────────────
 export const QUANTITIES = [
   {
-    id: "250", label: "250g", price: 180, servings: "~16 tazas",
+    id: "250", label: "250g", price: 140, servings: "~16 tazas",
     description: "Perfecta para explorar. Una bolsa que dura dos semanas de buenos momentos.",
     image: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=900&q=85&fit=crop",
     bgImage: "https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=1400&q=80&fit=crop",
     bgColor: "#eef5f0", accentColor: "#4a7c59",
   },
   {
-    id: "500", label: "500g", price: 320, servings: "~33 tazas",
+    id: "500", label: "500g", price: 220, servings: "~33 tazas",
     description: "El favorito de los devotos. Un mes completo de ritual matutino.",
     image: "https://images.unsplash.com/photo-1611080626919-7cf5a9dbab12?w=900&q=85&fit=crop",
     bgImage: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=1400&q=80&fit=crop",
     bgColor: "#f5f0eb", accentColor: "#9c7c38",
   },
   {
-    id: "1000", label: "1 kg", price: 580, servings: "~66 tazas",
+    id: "1000", label: "1 kg", price: 440, servings: "~66 tazas",
     description: "Para los que no conciben un día sin su Alma Mía. El compromiso total.",
     image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=900&q=85&fit=crop",
     bgImage: "https://images.unsplash.com/photo-1589927986089-35812388d1f4?w=1400&q=80&fit=crop",
