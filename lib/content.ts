@@ -16,14 +16,13 @@ export const BRAND = {
 
 // ── HERO ────────────────────────────────────────────────────
 export const HERO = {
-  headline: "Diseña tu",
+  headline: "Descubre tu",
   headlineItalic: "café ideal",
   subtitle: "Cada taza es un ritual. Elige tu origen, tu proceso, tu momento.",
   cta: "Comenzar experiencia",
   backgroundImage:
     "/bg.jpg",
   stats: [
-
     { value: "100%", label: "Arábica"      },
     { value: "Mx",   label: "Tostado aquí" },
   ],
