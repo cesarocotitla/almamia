@@ -207,19 +207,8 @@ export default function Hero({ onStart }: HeroProps) {
         </div>
       </div>
 
-      {/* Badge */}
-      <div style={{
-        position: "absolute", right: 52, top: "55%",
-        transform: "translateY(-50%)", zIndex: 20,
-        width: 90, height: 90, borderRadius: "50%",
-        border: `1px solid ${BRAND.primaryColor}30`,
-        background: "rgba(245,242,237,0.75)",
-        backdropFilter: "blur(10px)",
-        display: "flex", flexDirection: "column",
-        alignItems: "center", justifyContent: "center",
-      }}>
-        
-      </div>
+     
+     
     </section>
   )
 }
