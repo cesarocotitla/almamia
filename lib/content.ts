@@ -76,7 +76,7 @@ export const ORIGINS = [
 export const ROASTS = [
   {
     id: "light",
-    name: "Light",
+    name: "Claro",
     temp: "205°C",
     notes: ["Frutal", "Cítrico", "Alta acidez"],
     description: "Tostado claro que preserva los sabores de origen. Ideal para métodos de filtro donde cada nota del terroir florece libre.",
@@ -87,7 +87,7 @@ export const ROASTS = [
   },
   {
     id: "city",
-    name: "City / Medium",
+    name: "Medio",
     temp: "210°C",
     notes: ["Equilibrado", "Caramelo", "Nuez"],
     description: "El punto de encuentro entre origen y proceso. Dulzura que persiste, cuerpo que abraza. El favorito de los conocedores.",
@@ -98,7 +98,7 @@ export const ROASTS = [
   },
   {
     id: "full-city",
-    name: "Full City",
+    name: "Medio Oscuro",
     temp: "219°C",
     notes: ["Chocolate", "Caramelo oscuro", "Cuerpo pleno"],
     description: "Justo antes del segundo crack. Sabores más profundos y complejos con dulzura de chocolate y un final largo.",
@@ -109,7 +109,7 @@ export const ROASTS = [
   },
   {
     id: "dark",
-    name: "Dark",
+    name: "Viena (Oscuro)",
     temp: "224°C",
     notes: ["Chocolate oscuro", "Humo", "Intenso"],
     description: "Intenso y profundo. El origen cede protagonismo al proceso. Para los que buscan una taza que despierte todos los sentidos.",
@@ -120,7 +120,7 @@ export const ROASTS = [
   },
   {
     id: "french",
-    name: "French",
+    name: "Francés (Oscuro Intenso)",
     temp: "230°C",
     notes: ["Ahumado", "Amargo suave", "Aceites visibles"],
     description: "El grano comienza a brillar con sus aceites naturales. Sabor intenso y ahumado con un cuerpo pesado y sensual.",
@@ -128,18 +128,7 @@ export const ROASTS = [
     bgColor: "#e0d4c4",
     accentColor: "#5a3015",
     textDark: true,
-  },
-  {
-    id: "italian",
-    name: "Italian",
-    temp: "245°C",
-    notes: ["Carbonizado", "Muy amargo", "Espresso extremo"],
-    description: "Al límite del fuego. Un tostado extremo para espíritus intrépidos. El grano casi carbonizado libera sabores únicos e irrepetibles.",
-    image: "/grano-tostado.png",
-    bgColor: "#d8ccbc",
-    accentColor: "#3d1a08",
-    textDark: true,
-  },
+  }
 ]
 
 // ── MOLIDO ───────────────────────────────────────────────────
