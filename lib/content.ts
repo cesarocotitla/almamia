@@ -21,7 +21,7 @@ export const HERO = {
   subtitle: "Cada taza es un ritual. Elige tu origen, tu proceso, tu momento.",
   cta: "Comenzar experiencia",
   backgroundImage:
-    "https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=1400&q=90&fit=crop",
+    "/bg.jpg",
   stats: [
     { value: "100%", label: "Arábica"      },
     { value: "Mx",   label: "Tostado aquí" },
