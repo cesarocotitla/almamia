@@ -57,7 +57,7 @@ export default function PageTransition() {
       ref={curtainRef}
       style={{
         position: "fixed", inset: 0, zIndex: 9990,
-        background: "#f5f2ed",
+        background: "#ffffff",
         transformOrigin: "top",
         pointerEvents: "none",
       }}

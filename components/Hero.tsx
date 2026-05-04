@@ -84,8 +84,8 @@ export default function Hero({ onStart }: HeroProps) {
         style={{
           position: "absolute", inset: 0,
           background: [
-            "linear-gradient(to bottom, rgba(245,242,237,0.65) 0%, rgba(245,242,237,0.1) 45%, rgba(245,242,237,0.7) 100%)",
-            "linear-gradient(to right,  rgba(245,242,237,0.78) 0%, rgba(245,242,237,0.05) 60%)",
+            "linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.7) 100%)",
+            "linear-gradient(to right,  rgba(255,255,255,1) 0%, rgba(255,255,255,0.60) 90%)",
           ].join(", "),
         }}
       />
@@ -106,7 +106,7 @@ export default function Hero({ onStart }: HeroProps) {
           <div ref={eyebrowRef} style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 24 }}>
             <span style={{ width: 32, height: 1, background: BRAND.primaryColor, display: "inline-block" }} />
             <span style={{
-              fontFamily: "var(--font-sans)", fontSize: 10,
+              fontFamily: "var(--font-sans)", fontSize: 12,
               letterSpacing: "0.35em", textTransform: "uppercase",
               color: BRAND.primaryColor, fontWeight: 400,
             }}>
@@ -119,7 +119,7 @@ export default function Hero({ onStart }: HeroProps) {
             ref={titleRef}
             style={{
               fontFamily: "var(--font-serif)",
-              fontSize: "clamp(64px, 9vw, 130px)",
+              fontSize: "clamp(64px, 7vw, 130px)",
               lineHeight: 0.95,
               color: "#1a1208",
               letterSpacing: "-0.03em",
@@ -137,7 +137,7 @@ export default function Hero({ onStart }: HeroProps) {
           <p
             ref={subtitleRef}
             style={{
-              fontFamily: "var(--font-sans)", fontSize: 15,
+              fontFamily: "var(--font-sans)", fontSize: 13,
               lineHeight: 1.6, fontWeight: 300,
               color: "rgba(26,18,8,0.58)", maxWidth: 480,
               marginBottom: 36, whiteSpace: "nowrap",

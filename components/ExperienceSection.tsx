@@ -174,7 +174,7 @@ function StepSection({ stepId, label, subtitle, items, selectedIndex, onSelect, 
   const current = items[selectedIndex] as Record<string, string | number | string[] | undefined>
 
   return (
-    <section style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "120px 64px 80px", background: "#f5f2ed", position: "relative" }}>
+    <section style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "120px 64px 80px", background: "#ffffff", position: "relative" }}>
 
       {/* Watermark number */}
       <div style={{ position: "absolute", top: 80, left: "50%", transform: "translateX(-50%)", fontFamily: "var(--font-serif)", fontSize: 180, fontWeight: 400, color: "rgba(59,81,160,0.04)", lineHeight: 1, userSelect: "none", pointerEvents: "none", whiteSpace: "nowrap" }}>

@@ -25,7 +25,7 @@ export default function Navbar() {
       <img
         src="/logo.png"
         alt="Alma Mía"
-        style={{ height: 56, width: "auto", objectFit: "contain" }}
+        style={{ height: 98, width: "auto", objectFit: "contain" }}
       />
     </nav>
   )

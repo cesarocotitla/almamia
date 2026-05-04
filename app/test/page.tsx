@@ -2,7 +2,7 @@ export default function TestPage() {
   const items = ["Chiapas","Oaxaca","Veracruz","Guerrero","Michoacán","Jalisco","Puebla","Hidalgo"]
   
   return (
-    <div style={{ padding: 40, background: "#f5f2ed", minHeight: "100vh" }}>
+    <div style={{ padding: 40, background: "#ffffff", minHeight: "100vh" }}>
 
       <h3 style={{ fontFamily: "sans-serif", marginBottom: 16 }}>
         Test grid + min-width:0 + overflow scroll
