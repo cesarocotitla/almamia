@@ -1,15 +1,18 @@
 "use client"
 
 import React, { useRef, useState } from "react"
-import { ORIGINS, ROASTS, GRINDS, QUANTITIES, buildWhatsAppMessage } from "@/lib/content"
+import { ORIGINS, ROASTS, GRINDS, GRINDS_TECH, QUANTITIES, VIDEOS, buildWhatsAppMessage } from "@/lib/content"
+import VideoModal from "@/components/VideoModal"
+import SuggestedProducts from "@/components/SuggestedProducts"
 
 type StepId = "origin" | "roast" | "grind" | "quantity"
 interface Order { origin: number; roast: number; grind: number; quantity: number }
+type GrindMode = "method" | "grind"
 
 const STEPS_CONFIG = [
   { id: "origin"   as StepId, label: "Origen",   subtitle: "¿De dónde viene tu café?",     items: ORIGINS   },
   { id: "roast"    as StepId, label: "Tostado",  subtitle: "¿Qué tan intenso lo quieres?", items: ROASTS    },
-  { id: "grind"    as StepId, label: "Molido",   subtitle: "¿Cómo lo preparas?",           items: GRINDS    },
+  { id: "grind"    as StepId, label: "Preparación", subtitle: "¿Cómo preparas tu café?",   items: GRINDS    },
   { id: "quantity" as StepId, label: "Cantidad", subtitle: "¿Cuánto necesitas?",            items: QUANTITIES },
 ]
 
@@ -32,35 +35,101 @@ function RoastBeans({ color, opacity = 1 }: { color: string; opacity?: number })
   )
 }
 
-// ── Grind icon SVG ───────────────────────────────────────────
+// ── Brew method icon SVG ─────────────────────────────────────
 function GrindIcon({ type, active }: { type: string; active: boolean }) {
-  const color = active ? "#3b51a0" : "rgba(26,18,8,0.25)"
+  const c  = active ? "#3b51a0" : "rgba(26,18,8,0.28)"
+  const sw = "1.8"
+  const style = { display: "block" as const, marginBottom: 14 }
+
   const icons: Record<string, React.ReactElement> = {
+    drip: (
+      <svg width="44" height="48" viewBox="0 0 44 48" fill="none" style={style}>
+        <rect x="6" y="10" width="32" height="28" rx="3" stroke={c} strokeWidth={sw}/>
+        <path d="M14 38 L14 44 L30 44 L30 38" stroke={c} strokeWidth={sw} strokeLinejoin="round"/>
+        <line x1="6" y1="18" x2="38" y2="18" stroke={c} strokeWidth="1.4"/>
+        <line x1="22" y1="4" x2="22" y2="10" stroke={c} strokeWidth={sw} strokeLinecap="round"/>
+        <circle cx="22" cy="24" r="3" stroke={c} strokeWidth="1.4"/>
+        <line x1="22" y1="27" x2="22" y2="38" stroke={c} strokeWidth="1.4" strokeDasharray="2 2"/>
+      </svg>
+    ),
+    pot: (
+      <svg width="44" height="48" viewBox="0 0 44 48" fill="none" style={style}>
+        <path d="M10 16 L8 40 L36 40 L34 16 Z" stroke={c} strokeWidth={sw} strokeLinejoin="round"/>
+        <ellipse cx="22" cy="16" rx="12" ry="4" stroke={c} strokeWidth={sw}/>
+        <ellipse cx="22" cy="12" rx="8" ry="3" stroke={c} strokeWidth="1.4"/>
+        <line x1="6" y1="28" x2="38" y2="28" stroke={c} strokeWidth="1.2" strokeDasharray="3 2"/>
+        <path d="M34 22 Q40 20 40 26 Q40 30 34 28" stroke={c} strokeWidth="1.4" fill="none"/>
+      </svg>
+    ),
+    espresso: (
+      <svg width="44" height="48" viewBox="0 0 44 48" fill="none" style={style}>
+        <rect x="4" y="14" width="36" height="22" rx="4" stroke={c} strokeWidth={sw}/>
+        <line x1="4" y1="10" x2="40" y2="10" stroke={c} strokeWidth={sw} strokeLinecap="round"/>
+        <rect x="10" y="20" width="14" height="10" rx="2" stroke={c} strokeWidth="1.5"/>
+        <circle cx="32" cy="22" r="3.5" stroke={c} strokeWidth="1.5"/>
+        <line x1="17" y1="36" x2="17" y2="42" stroke={c} strokeWidth={sw} strokeLinecap="round"/>
+        <line x1="12" y1="42" x2="22" y2="42" stroke={c} strokeWidth={sw} strokeLinecap="round"/>
+      </svg>
+    ),
+    v60: (
+      <svg width="44" height="48" viewBox="0 0 44 48" fill="none" style={style}>
+        <path d="M8 8 L22 38 L36 8 Z" stroke={c} strokeWidth={sw} strokeLinejoin="round"/>
+        <line x1="10" y1="15" x2="34" y2="15" stroke={c} strokeWidth="1.2" strokeDasharray="3 2"/>
+        <line x1="22" y1="38" x2="22" y2="44" stroke={c} strokeWidth={sw} strokeLinecap="round"/>
+        <ellipse cx="22" cy="46" rx="7" ry="2" stroke={c} strokeWidth="1.4"/>
+        <line x1="14" y1="21" x2="30" y2="21" stroke={c} strokeWidth="1.1" strokeDasharray="2 2"/>
+      </svg>
+    ),
+    frenchpress: (
+      <svg width="44" height="48" viewBox="0 0 44 48" fill="none" style={style}>
+        <rect x="8" y="10" width="28" height="30" rx="3" stroke={c} strokeWidth={sw}/>
+        <line x1="8" y1="18" x2="36" y2="18" stroke={c} strokeWidth="1.5"/>
+        <line x1="22" y1="4" x2="22" y2="10" stroke={c} strokeWidth={sw} strokeLinecap="round"/>
+        <line x1="14" y1="26" x2="30" y2="26" stroke={c} strokeWidth="2" strokeLinecap="round"/>
+        <line x1="22" y1="18" x2="22" y2="26" stroke={c} strokeWidth="1.5" strokeDasharray="2 2"/>
+        <line x1="4" y1="40" x2="40" y2="40" stroke={c} strokeWidth={sw} strokeLinecap="round"/>
+      </svg>
+    ),
+    chemex: (
+      <svg width="44" height="48" viewBox="0 0 44 48" fill="none" style={style}>
+        <path d="M10 6 L22 26 L34 6 Z" stroke={c} strokeWidth={sw} strokeLinejoin="round"/>
+        <rect x="16" y="24" width="12" height="2" rx="1" fill={c} opacity="0.5"/>
+        <path d="M16 26 L12 44 L32 44 L28 26 Z" stroke={c} strokeWidth={sw} strokeLinejoin="round"/>
+        <line x1="8" y1="26" x2="36" y2="26" stroke={c} strokeWidth="1.5"/>
+      </svg>
+    ),
+    aeropress: (
+      <svg width="44" height="48" viewBox="0 0 44 48" fill="none" style={style}>
+        <rect x="14" y="8" width="16" height="28" rx="2" stroke={c} strokeWidth={sw}/>
+        <rect x="10" y="30" width="24" height="8" rx="2" stroke={c} strokeWidth={sw}/>
+        <line x1="22" y1="38" x2="22" y2="44" stroke={c} strokeWidth={sw} strokeLinecap="round"/>
+        <line x1="14" y1="20" x2="30" y2="20" stroke={c} strokeWidth="1.5"/>
+        <line x1="22" y1="2" x2="22" y2="8" stroke={c} strokeWidth="2.5" strokeLinecap="round"/>
+      </svg>
+    ),
+    moka: (
+      <svg width="44" height="48" viewBox="0 0 44 48" fill="none" style={style}>
+        <path d="M14 28 L12 42 L32 42 L30 28 Z" stroke={c} strokeWidth={sw} strokeLinejoin="round"/>
+        <ellipse cx="22" cy="28" rx="10" ry="3.5" stroke={c} strokeWidth={sw}/>
+        <path d="M14 28 L13 16 Q13 8 22 8 Q31 8 31 16 L30 28" stroke={c} strokeWidth={sw} fill="none"/>
+        <path d="M30 20 Q38 18 38 24 Q38 30 30 28" stroke={c} strokeWidth="1.5" fill="none"/>
+        <ellipse cx="22" cy="8" rx="5" ry="2" stroke={c} strokeWidth="1.4"/>
+      </svg>
+    ),
+    coldbrew: (
+      <svg width="44" height="48" viewBox="0 0 44 48" fill="none" style={style}>
+        <rect x="10" y="10" width="24" height="32" rx="5" stroke={c} strokeWidth={sw}/>
+        <rect x="15" y="6" width="14" height="6" rx="2" stroke={c} strokeWidth="1.5"/>
+        <line x1="10" y1="24" x2="34" y2="24" stroke={c} strokeWidth="1.2" strokeDasharray="3 2"/>
+        <line x1="14" y1="30" x2="30" y2="30" stroke={c} strokeWidth="1.1" strokeDasharray="2 2"/>
+        <line x1="14" y1="35" x2="26" y2="35" stroke={c} strokeWidth="1.1" strokeDasharray="2 2"/>
+      </svg>
+    ),
     whole: (
-      <svg width="48" height="48" viewBox="0 0 48 48" style={{ display: "block", marginBottom: 14 }}>
-        <ellipse cx="24" cy="24" rx="13" ry="17" fill={color} opacity="0.9" />
-        <line x1="24" y1="9" x2="23" y2="39" stroke={active ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.4)"} strokeWidth="2" strokeLinecap="round" />
-      </svg>
-    ),
-    coarse: (
-      <svg width="48" height="40" viewBox="0 0 48 40" style={{ display: "block", marginBottom: 14 }}>
-        {[[8,8],[22,4],[36,8],[6,22],[20,18],[34,22],[12,32],[28,30]].map(([cx,cy],i) => (
-          <circle key={i} cx={cx} cy={cy} r="5" fill={color} opacity="0.85" />
-        ))}
-      </svg>
-    ),
-    medium: (
-      <svg width="48" height="40" viewBox="0 0 48 40" style={{ display: "block", marginBottom: 14 }}>
-        {[[6,6],[14,3],[22,6],[30,3],[38,6],[4,16],[12,13],[20,16],[28,13],[36,16],[44,13],[8,26],[16,23],[24,26],[32,23],[40,26],[10,34],[20,31],[30,34]].map(([cx,cy],i) => (
-          <circle key={i} cx={cx} cy={cy} r="3" fill={color} opacity="0.75" />
-        ))}
-      </svg>
-    ),
-    fine: (
-      <svg width="48" height="40" viewBox="0 0 48 40" style={{ display: "block", marginBottom: 14 }}>
-        {[[4,4],[9,2],[14,5],[19,2],[24,5],[29,2],[34,5],[39,2],[44,5],[2,11],[7,9],[12,12],[17,9],[22,12],[27,9],[32,12],[37,9],[42,12],[5,18],[10,16],[15,19],[20,16],[25,19],[30,16],[35,19],[40,16],[3,25],[8,23],[13,26],[18,23],[23,26],[28,23],[33,26],[38,23],[43,26],[6,32],[11,30],[16,33],[21,30],[26,33],[31,30],[36,33]].map(([cx,cy],i) => (
-          <circle key={i} cx={cx} cy={cy} r="1.5" fill={color} opacity="0.65" />
-        ))}
+      <svg width="44" height="48" viewBox="0 0 44 48" fill="none" style={style}>
+        <circle cx="22" cy="22" r="14" stroke={c} strokeWidth={sw}/>
+        <path d="M17 18 Q17 13 22 13 Q27 13 27 18 Q27 21 22 23 L22 26" stroke={c} strokeWidth={sw} strokeLinecap="round" fill="none"/>
+        <circle cx="22" cy="30" r="1.8" fill={c}/>
       </svg>
     ),
   }
@@ -81,7 +150,8 @@ function ItemCard({ item, index, isSelected, stepId, onSelect }: {
   const particle = isGrind ? String(item.particle ?? "") : ""
   const grindIcon = isGrind ? String(item.grindIcon ?? "") : ""
   const roastColor = isRoast ? String(item.accentColor ?? "#8B5E3C") : ""
-  const meta     = !isGrind ? [item.region, item.altitude, item.temp, item.servings].filter(Boolean).map(String).join(" · ") : ""
+  const meta     = !isGrind ? [item.region, item.process && `Proceso ${item.process}`, item.variety, item.altitude, item.temp, item.servings].filter(Boolean).map(String).join(" · ") : ""
+  const producer = item.producer ? String(item.producer) : ""
   const notes    = !isGrind && Array.isArray(item.notes) ? item.notes as string[] : []
   const price    = item.price ? `$${item.price} MXN` : null
 
@@ -132,6 +202,7 @@ function ItemCard({ item, index, isSelected, stepId, onSelect }: {
 
       {!isGrind && (
         <>
+          {producer && <div style={{ fontFamily: "var(--font-sans)", fontSize: 11, color: "rgba(26,18,8,0.55)", fontWeight: 300, marginBottom: 6 }}>Productor: {producer}</div>}
           {meta && <div style={{ fontFamily: "var(--font-sans)", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(26,18,8,0.35)", fontWeight: 300, marginBottom: notes.length ? 10 : 0 }}>{meta}</div>}
           {notes.length > 0 && (
             <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
@@ -163,18 +234,26 @@ function QuantityStepper({ count, onChange }: { count: number; onChange: (n: num
 }
 
 // ── Step section ─────────────────────────────────────────────
-function StepSection({ stepId, label, subtitle, items, selectedIndex, onSelect, stepNumber, isLast, quantityCount, onQuantityChange, onContinue }: {
+function StepSection({ stepId, label, subtitle, items, selectedIndex, onSelect, stepNumber, isLast, quantityCount, onQuantityChange, onContinue, videoUrl, grindMode, onGrindModeChange }: {
   stepId: StepId; label: string; subtitle: string
   items: Record<string, string | number | string[] | undefined>[]
   selectedIndex: number; onSelect: (i: number) => void
   stepNumber: number; isLast: boolean
   quantityCount: number; onQuantityChange: (n: number) => void
   onContinue: () => void
+  videoUrl: string
+  grindMode: GrindMode; onGrindModeChange: (m: GrindMode) => void
 }) {
-  const current = items[selectedIndex] as Record<string, string | number | string[] | undefined>
+  const isGrindStep = stepId === "grind"
+  const [showVideo,   setShowVideo]   = useState(false)
+  const activeItems: Record<string, string | number | string[] | undefined>[] = isGrindStep
+    ? (grindMode === "method" ? GRINDS : GRINDS_TECH) as unknown as Record<string, string | number | string[] | undefined>[]
+    : items
+  const safeIndex = Math.min(selectedIndex, activeItems.length - 1)
+  const current = (activeItems[safeIndex] ?? activeItems[0]) as Record<string, string | number | string[] | undefined>
 
   return (
-    <section style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "120px 64px 80px", background: "#ffffff", position: "relative" }}>
+    <section data-step={stepId} style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "80px 64px 48px", background: "#ffffff", position: "relative" }}>
 
       {/* Watermark number */}
       <div style={{ position: "absolute", top: 80, left: "50%", transform: "translateX(-50%)", fontFamily: "var(--font-serif)", fontSize: 180, fontWeight: 400, color: "rgba(59,81,160,0.04)", lineHeight: 1, userSelect: "none", pointerEvents: "none", whiteSpace: "nowrap" }}>
@@ -183,15 +262,50 @@ function StepSection({ stepId, label, subtitle, items, selectedIndex, onSelect, 
 
       {/* Header */}
       <div style={{ textAlign: "center", marginBottom: 56, position: "relative", zIndex: 1 }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginBottom: 16 }}>
-          <span style={{ width: 28, height: 1, background: "var(--chambray)", display: "inline-block" }} />
-          <span style={{ fontFamily: "var(--font-sans)", fontSize: 10, letterSpacing: "0.3em", textTransform: "uppercase", color: "var(--chambray)", fontWeight: 300 }}>{label} · {stepNumber} de {STEPS_CONFIG.length}</span>
-          <span style={{ width: 28, height: 1, background: "var(--chambray)", display: "inline-block" }} />
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, marginBottom: 6 }}>
+          <span style={{ width: 40, height: 2, background: "var(--chambray)", display: "inline-block" }} />
+          <span style={{ fontFamily: "var(--font-sans)", fontSize: 18, letterSpacing: "0.25em", textTransform: "uppercase", color: "var(--chambray)", fontWeight: 600 }}>{label}</span>
+          <span style={{ width: 40, height: 2, background: "var(--chambray)", display: "inline-block" }} />
         </div>
+        <div style={{ fontFamily: "var(--font-sans)", fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(26,18,8,0.4)", fontWeight: 400, marginBottom: 16 }}>
+          Paso {stepNumber} de {STEPS_CONFIG.length}
+        </div>
+
+        {/* Video button */}
+        {videoUrl && (
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}>
+            <button
+              onClick={() => setShowVideo(true)}
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 6,
+                fontFamily: "var(--font-sans)", fontSize: 10, fontWeight: 400,
+                letterSpacing: "0.12em", textTransform: "uppercase",
+                color: "rgba(26,18,8,0.45)", background: "rgba(255,255,255,0.7)",
+                border: "1px solid rgba(26,18,8,0.12)", borderRadius: 50,
+                padding: "6px 16px", cursor: "pointer", transition: "all 0.2s",
+              }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--chambray)"; e.currentTarget.style.color = "var(--chambray)" }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(26,18,8,0.12)"; e.currentTarget.style.color = "rgba(26,18,8,0.45)" }}
+            >
+              <span>▶</span> ¿Qué es esto?
+            </button>
+          </div>
+        )}
+
+        {/* Video modal */}
+        {showVideo && (
+          <VideoModal url={videoUrl} title={label} onClose={() => setShowVideo(false)} />
+        )}
 
         <h2 style={{ fontFamily: "var(--font-serif)", fontSize: "clamp(40px, 5vw, 64px)", color: "#1a1208", lineHeight: 1.05, marginBottom: 12 }}>
           {String(current.name ?? current.label ?? "")}
         </h2>
+
+        {current.producer && (
+          <div style={{ fontFamily: "var(--font-sans)", fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--chambray)", fontWeight: 400, marginBottom: 12 }}>
+            {[current.region, current.farm && `Finca ${current.farm}`, `Productor: ${current.producer}`].filter(Boolean).join(" · ")}
+          </div>
+        )}
 
         {current.description && (
           <p style={{ fontFamily: "var(--font-sans)", fontSize: 15, lineHeight: 1.7, color: "rgba(26,18,8,0.5)", fontWeight: 300, maxWidth: 480, margin: "0 auto" }}>
@@ -211,21 +325,45 @@ function StepSection({ stepId, label, subtitle, items, selectedIndex, onSelect, 
       </div>
 
       {/* Cards carousel */}
-      <div style={{ width: "100%", maxWidth: 900, position: "relative", zIndex: 1 }}>
-        <p style={{ fontFamily: "var(--font-sans)", fontSize: 9, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(26,18,8,0.3)", marginBottom: 16, textAlign: "center" }}>
+      <div style={{ width: "100%", position: "relative", zIndex: 1 }}>
+
+        {isGrindStep && (
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}>
+            <div style={{ display: "flex", background: "rgba(26,18,8,0.06)", borderRadius: 50, padding: 4, gap: 4 }}>
+              {(["method", "grind"] as const).map((mode, idx) => (
+                <button key={mode} onClick={() => onGrindModeChange(mode)} style={{
+                  padding: "8px 20px", borderRadius: 50, border: "none", cursor: "pointer",
+                  fontFamily: "var(--font-sans)", fontSize: 11,
+                  fontWeight: grindMode === mode ? 500 : 300,
+                  letterSpacing: "0.08em",
+                  background: grindMode === mode ? "#fff" : "transparent",
+                  color: grindMode === mode ? "var(--chambray)" : "rgba(26,18,8,0.45)",
+                  boxShadow: grindMode === mode ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
+                  transition: "all 0.25s",
+                }}>
+                  {idx === 0 ? "Método de preparación" : "Tipo de molienda"}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <p style={{ fontFamily: "var(--font-sans)", fontSize: 9, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(26,18,8,0.3)", marginBottom: 12, textAlign: "center" }}>
           ← desliza para explorar →
         </p>
 
-        {/* Outer wrapper — overflow hidden to contain scroll */}
-        <div style={{ overflow: "hidden", padding: "16px 0" }}>
+        <div style={{ overflow: "hidden", padding: "12px 0" }}>
           <div style={{
             display: "flex", gap: 14,
             overflowX: "auto", overflowY: "visible",
-            paddingBottom: 8, paddingTop: 8,
-            scrollbarWidth: "none",
+            paddingBottom: 12, paddingTop: 8,
+            paddingLeft: 8, paddingRight: 8,
+            scrollbarWidth: "auto",
+            scrollbarColor: "rgba(59,81,160,0.3) transparent",
             justifyContent: "safe center",
-          } as React.CSSProperties}>
-            {items.map((item, i) => (
+          } as React.CSSProperties}
+          className="card-track">
+            {activeItems.map((item, i) => (
               <ItemCard key={i} item={item as Record<string, string | number | string[] | undefined>} index={i} isSelected={i === selectedIndex} stepId={stepId} onSelect={onSelect} />
             ))}
           </div>
@@ -233,7 +371,7 @@ function StepSection({ stepId, label, subtitle, items, selectedIndex, onSelect, 
 
         {/* Dots */}
         <div style={{ display: "flex", gap: 6, justifyContent: "center", marginTop: 8 }}>
-          {items.map((_, i) => (
+          {activeItems.map((_, i) => (
             <div key={i} onClick={() => onSelect(i)} style={{ width: i === selectedIndex ? 20 : 6, height: 4, borderRadius: 2, background: i === selectedIndex ? "var(--chambray)" : "rgba(26,18,8,0.12)", transition: "all 0.3s", cursor: "pointer" }} />
           ))}
         </div>
@@ -241,7 +379,7 @@ function StepSection({ stepId, label, subtitle, items, selectedIndex, onSelect, 
 
       {/* Continue button */}
       {!isLast && (
-        <div style={{ display: "flex", justifyContent: "center", marginTop: 48, paddingBottom: 32 }}>
+        <div style={{ display: "flex", justifyContent: "center", marginTop: 24, paddingBottom: 24 }}>
           <button
             onClick={onContinue}
             style={{
@@ -268,8 +406,10 @@ function StepSection({ stepId, label, subtitle, items, selectedIndex, onSelect, 
 
 // ── Main ─────────────────────────────────────────────────────
 export default function ExperienceSection() {
-  const [order,         setOrder]         = useState<Order>({ origin: 0, roast: 0, grind: 0, quantity: 0 })
+  const [order,         setOrder]         = useState<Order>({ origin: 0, roast: Math.max(0, ROASTS.findIndex(r => r.id === "full-city")), grind: 0, quantity: Math.max(0, QUANTITIES.findIndex(q => q.id === "500")) })
+  const [grindMode,     setGrindMode]     = useState<GrindMode>("grind")
   const [quantityCount, setQuantityCount] = useState(1)
+  const [extras,        setExtras]        = useState<{ id: string; name: string; price: number }[]>([])
   const sectionRefs = useRef<(HTMLDivElement | null)[]>([])
 
   const scrollToNext = (currentIndex: number) => {
@@ -277,14 +417,18 @@ export default function ExperienceSection() {
     if (next) next.scrollIntoView({ behavior: "smooth" })
   }
 
-  const basePrice  = QUANTITIES[order.quantity]?.price ?? 0
+  const originPrices: Record<string, number> = ORIGINS[order.origin]?.prices ?? {}
+  const quantityItems = QUANTITIES.map(q => ({ ...q, price: originPrices[q.id] ?? q.price }))
+  const basePrice  = quantityItems[order.quantity]?.price ?? 0
   const summary = {
     origin:   ORIGINS[order.origin]?.name       ?? "",
     roast:    ROASTS[order.roast]?.name         ?? "",
-    grind:    GRINDS[order.grind]?.name         ?? "",
+    grind:    (grindMode === "method" ? GRINDS : GRINDS_TECH)[order.grind]?.recommendedGrind ?? "",
     quantity: QUANTITIES[order.quantity]?.label ? `${quantityCount} × ${QUANTITIES[order.quantity].label}` : "",
     price:    basePrice * quantityCount,
+    extras:   extras,
   }
+  const extrasTotal = extras.reduce((a, e) => a + e.price, 0)
   const waUrl      = buildWhatsAppMessage(summary)
   const allSelected = summary.origin && summary.roast && summary.grind && summary.quantity
 
@@ -296,7 +440,7 @@ export default function ExperienceSection() {
             stepId={step.id}
             label={step.label}
             subtitle={step.subtitle}
-            items={step.items as Record<string, string | number | string[] | undefined>[]}
+            items={(step.id === "quantity" ? quantityItems : step.items) as Record<string, string | number | string[] | undefined>[]}
             selectedIndex={order[step.id]}
             onSelect={idx => setOrder(prev => ({ ...prev, [step.id]: idx }))}
             stepNumber={i + 1}
@@ -304,6 +448,9 @@ export default function ExperienceSection() {
             quantityCount={quantityCount}
             onQuantityChange={setQuantityCount}
             onContinue={() => scrollToNext(i)}
+            videoUrl={VIDEOS[step.id as keyof typeof VIDEOS] ?? ""}
+            grindMode={grindMode}
+            onGrindModeChange={m => { setGrindMode(m); setOrder(prev => ({ ...prev, grind: 0 })) }}
           />
         </div>
       ))}
@@ -317,6 +464,11 @@ export default function ExperienceSection() {
             <span style={{ width: 28, height: 1, background: "var(--chambray)", display: "inline-block" }} />
             <span style={{ fontFamily: "var(--font-sans)", fontSize: 10, letterSpacing: "0.3em", textTransform: "uppercase", color: "var(--chambray)", fontWeight: 300 }}>Tu pedido</span>
             <span style={{ width: 28, height: 1, background: "var(--chambray)", display: "inline-block" }} />
+          </div>
+
+          {/* Suggested products */}
+          <div style={{ marginBottom: 56 }}>
+            <SuggestedProducts extras={extras} onExtrasChange={setExtras} />
           </div>
 
           <h2 style={{ fontFamily: "var(--font-serif)", fontSize: 52, color: "#1a1208", marginBottom: 48, lineHeight: 1.1 }}>
@@ -340,8 +492,13 @@ export default function ExperienceSection() {
 
           {summary.price > 0 && (
             <div style={{ marginBottom: 40 }}>
-              <span style={{ fontFamily: "var(--font-serif)", fontSize: 60, color: "#1a1208" }}>${summary.price}</span>
+              <span style={{ fontFamily: "var(--font-serif)", fontSize: 60, color: "#1a1208" }}>${summary.price + extrasTotal}</span>
               <span style={{ fontFamily: "var(--font-sans)", fontSize: 14, color: "rgba(26,18,8,0.4)", marginLeft: 10 }}>MXN</span>
+              {extrasTotal > 0 && (
+                <div style={{ fontFamily: "var(--font-sans)", fontSize: 12, color: "rgba(26,18,8,0.4)", marginTop: 4, fontWeight: 300 }}>
+                  Café ${summary.price} + accesorios ${extrasTotal}
+                </div>
+              )}
             </div>
           )}
 
@@ -357,7 +514,10 @@ export default function ExperienceSection() {
 
       <style>{`
         @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
-        section div[style*="overflow-x"]::-webkit-scrollbar { display: none; }
+        .card-track::-webkit-scrollbar { height: 4px; }
+        .card-track::-webkit-scrollbar-track { background: transparent; }
+        .card-track::-webkit-scrollbar-thumb { background: rgba(59,81,160,0.25); border-radius: 2px; }
+        .card-track::-webkit-scrollbar-thumb:hover { background: rgba(59,81,160,0.45); }
       `}</style>
     </>
   )

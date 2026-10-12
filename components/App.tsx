@@ -3,6 +3,7 @@
 import { useRef } from "react"
 import Navbar from "@/components/Navbar"
 import Hero from "@/components/Hero"
+import WelcomeSection from "@/components/WelcomeSection"
 import ExperienceSection from "@/components/ExperienceSection"
 import CustomCursor from "@/components/CustomCursor"
 import PageTransition from "@/components/PageTransition"
@@ -21,6 +22,7 @@ export default function App() {
       <main>
         <Navbar />
         <Hero onStart={handleStart} />
+        <WelcomeSection />
         <div ref={experienceRef}>
           <ExperienceSection />
         </div>

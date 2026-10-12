@@ -16,8 +16,8 @@ export default function Navbar() {
       ref={navRef}
       style={{
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 50,
-        display: "flex", alignItems: "center", justifyContent: "center",
-        padding: "20px 0",
+        display: "flex", alignItems: "center", justifyContent: "flex-start",
+        padding: "20px 64px",
         background: "transparent",
         backdropFilter: "none",
       }}
@@ -25,7 +25,7 @@ export default function Navbar() {
       <img
         src="/logo.png"
         alt="Alma Mía"
-        style={{ height: 98, width: "auto", objectFit: "contain" }}
+        style={{ height: 72, width: "auto", objectFit: "contain" }}
       />
     </nav>
   )

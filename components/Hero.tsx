@@ -106,7 +106,7 @@ export default function Hero({ onStart }: HeroProps) {
           <div ref={eyebrowRef} style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 24 }}>
             <span style={{ width: 32, height: 1, background: BRAND.primaryColor, display: "inline-block" }} />
             <span style={{
-              fontFamily: "var(--font-sans)", fontSize: 12,
+              fontFamily: "var(--font-sans)", fontSize: 10,
               letterSpacing: "0.35em", textTransform: "uppercase",
               color: BRAND.primaryColor, fontWeight: 400,
             }}>
@@ -119,7 +119,7 @@ export default function Hero({ onStart }: HeroProps) {
             ref={titleRef}
             style={{
               fontFamily: "var(--font-serif)",
-              fontSize: "clamp(64px, 7vw, 130px)",
+              fontSize: "clamp(64px, 9vw, 130px)",
               lineHeight: 0.95,
               color: "#1a1208",
               letterSpacing: "-0.03em",
@@ -137,7 +137,7 @@ export default function Hero({ onStart }: HeroProps) {
           <p
             ref={subtitleRef}
             style={{
-              fontFamily: "var(--font-sans)", fontSize: 13,
+              fontFamily: "var(--font-sans)", fontSize: 15,
               lineHeight: 1.6, fontWeight: 300,
               color: "rgba(26,18,8,0.58)", maxWidth: 480,
               marginBottom: 36, whiteSpace: "nowrap",
@@ -207,7 +207,7 @@ export default function Hero({ onStart }: HeroProps) {
         </div>
       </div>
 
-      
+
     </section>
   )
 }
